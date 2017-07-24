@@ -27,7 +27,7 @@ void GRAPHinsertE (Graph G, Edge e){
   if (G->adj[v][w] == 0) {
     G->E++;
     G->adj[v][w] = 1;
-    // remove the reference above to turn into digraph
+    // remove the reference above to turn into undirected graph
     // G->adj[w][v] = 1;
   }
 }
@@ -39,7 +39,8 @@ void GRAPHremoveE (Graph G, Edge e){
   if (G->adj[v][w] == 1){
     G->E--;
     G->adj[v][w] = 0;
-    G->adj[w][v] = 0;
+    // remove the reference above to turn into undirected graph
+    // G->adj[w][v] = 0;
   }
 }
 
