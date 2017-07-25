@@ -10,6 +10,21 @@ static int cnt, cntP, pre[maxV], post[maxV];
 
 static int globaldepth;
 
+struct graph {int V; int E; link *adj; int **tc};
+
+void MATRIXinit (int V, int Z, int value){
+  int **M = (int **)malloc(V*sizeof(int *));
+
+  for(i=0; i<V; i++)
+    *(M+i) = (int *)malloc(V*sizeof(int));
+
+  for(i=0; i<V; i++)
+    for(j=0; j<V; j++)
+      M[i][j] = value;
+
+  return M;
+}
+
 /**
  * Functionally equivalent to Marshall's algorithm for computing transitive
  *  closure of digraphs. Otherwise, this implementation should be use for
@@ -39,76 +54,8 @@ int GRAPHreach (Graph G, int s, int t){
   return G->tc[s][t];
 }
 
-/**
- * Utility function used in Depth-first search implementation to printf
- *  spaces proportional to the level of recursion of the algorithm.
- * @param e          Edge
- * @param typeOfEdge String with the classification of the edge
- * @param depth      Number of spaces to print before the content
- */
-void show (Edge e, char *typeOfEdge, int depth) {
-  printf("%*c%d-%d %s\n", depth, ' ', e.v, e.w, typeOfEdge);
-}
-
-/**
- * Depth-first search recursion algorithm for digraphs. It classifies the
- *  edges into 4 types described in Sedgewick. The implementation is based
- *   on program 19.3. The running time is proportional to (V+E)
- * @param G Pointer for the graph structure
- * @param e Starting edge to compute the dfs-tree
- */
-void dfsR (Graph G, Edge e){
-  link t;
-  int i, v;
-  int w = e.w;
-  Edge x;
-
-  // printf ("tree %d-%d\n", e.v, e.w);
-  show (e, "tree", globaldepth);
-  globaldepth = globaldepth + 3;
-  pre[w] = cnt ++;
-  // printf("pre[%d]=%d\n", w, pre[w]);
-  for (t = G->adj[w]; t != NULL; t = t->next){
-    if (pre[t->v] == -1){
-      // printf("w=%d & pre[%d] == -1\n", w, t->v);
-      // globaldepth = globaldepth + 3;
-      dfsR (G, EDGE (w, t->v));
-    }
-    else
-      {
-        v = t->v;
-        x = EDGE (w, v);
-        if (post[v] == -1)
-          // printf("back %d->%d\n", x.v, x.w);
-          show (x, "back", globaldepth);
-        else if (pre[v] > pre[w])
-          // printf("down %d->%d\n", x.v, x.w);
-          show (x, "down", globaldepth);
-        else
-          // printf("cross %d->%d\n", x.v, x.w);
-          show (x, "cross", globaldepth);
-      } // end else
-    } // end for
-  post[w] = cntP++;
-  globaldepth = globaldepth - 3;
-}
-
-void initializeDfsR (Graph G){
-  // Test with echo '4-2 2-3 3-2 0-6 0-1 2-0 11-12 12-9 9-10 9-11 8-9 10-12 4-11 4-3 3-5 7-8 8-7 5-4 0-5 6-4 6-9 7-6' | ./19-10.x
-  cnt = 0;
-  cntP = 0;
-  globaldepth = 0;
-  int v;
-  for (v = 0; v < G->V; v++){
-    pre[v] = -1; post[v] = -1;
-  }
-  for (v = 0; v < G->V; v++)
-    if (pre[v] == -1)
-      dfsR (G, EDGE (v, v));
-}
 
 void constructFromStdin (t_lista* lista){
-
   char linha[1024];
   char v[10];
   char w[10];
@@ -191,18 +138,9 @@ int main(void){
 
   e = EDGE(0, 0);
 
-  initializeDfsR (G);
+  GRAPHtc (G);
 
-  int v;
-
-  printf("\n");
-
-  // dfsR (G, e);
-
-  for(v=0; v<maxV; v++)
-    printf("post[%d]=%d -- pre[%d]=%d ", v, post[v], v, pre[v]);
-
-  // Graph R = GRAPHreverse (G);
+    // Graph R = GRAPHreverse (G);
   //
   // GRAPHshow (R);
 

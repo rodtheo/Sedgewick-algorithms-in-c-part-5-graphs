@@ -13,6 +13,10 @@
 // amount of space used is proportional to number of vertices plus number
 // of edges in constrast with matrix representation which requires V^2 of space
 
+typedef struct node *link;
+struct node {int v; link next;};
+struct graph {int V; int E; link *adj;};
+
 typedef struct { int v; int w; } Edge;
 
 Edge EDGE (int, int);
