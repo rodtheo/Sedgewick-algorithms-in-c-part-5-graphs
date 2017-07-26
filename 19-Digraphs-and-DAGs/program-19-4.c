@@ -140,7 +140,7 @@ int main(void){
 
   GRAPHtc (G);
 
-    // Graph R = GRAPHreverse (G);
+  // Graph R = GRAPHreverse (G);
   //
   // GRAPHshow (R);
 
