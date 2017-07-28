@@ -1,10 +1,13 @@
+#include <vector>
+using namespace std;
+
 struct Edge {
-  int v, int w;
+  int v; int w;
   // the following is a constructor initializer
   // that assigns to member variables v and w the
   // corresponding value v or w if specified
   Edge (int v = -1, int w = -1): v(v), w(w) {}
-}
+};
 
 class DenseGRAPH{
   private:
@@ -18,8 +21,8 @@ class DenseGRAPH{
         adj[i].assign(V, false);
     }
 
-    int V() const {return V;}
-    int E() const {return E;}
+    int V() const {return Vcnt;}
+    int E() const {return Ecnt;}
     bool directed() const {return digraph;}
     int insert(Edge e) {
       int v = e.v, w = e.w;
