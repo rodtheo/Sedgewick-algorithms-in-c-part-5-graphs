@@ -24,7 +24,7 @@ class DenseGRAPH{
     int V() const {return Vcnt;}
     int E() const {return Ecnt;}
     bool directed() const {return digraph;}
-    int insert(Edge e) {
+    void insert(Edge e) {
       int v = e.v, w = e.w;
       if (adj[v][w] == false) Ecnt++;
       adj[v][w] = true;

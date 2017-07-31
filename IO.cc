@@ -1,22 +1,20 @@
 #include <string>
 #include <iostream>
-#include <cstring>
+#include <vector>
 #include "denseGRAPH.cc"
 using namespace std;
 
 template<class Graph>
-
 class IO {
   public:
-    static void show (const Graph&);
+    static void show (Graph&);
 
     static void scanEZ (Graph &);
 
     static void scan (Graph &);
 };
 
-template<class Graph>
-void IO<Graph>::show (const Graph& G){
+template<class Graph> void IO<Graph>::show (Graph& G){
   int i, j;
   Edge e;
 
@@ -27,57 +25,34 @@ void IO<Graph>::show (const Graph& G){
     cout << endl;
 }
 
-template<class Graph>
-void IO<Graph>::scanEZ (Graph & G){
+template<class Graph> void IO<Graph>::scanEZ (Graph & G){
 
-  string linha;
+    vector<int> v;
+    vector<int> w;
 
-  getline(cin, linha);
+    Edge e;
 
-  cout << "linha=" << linha << endl;
+    int n;
+    // int v, w;
+    int i = 0;
+    while (cin >> n)
+    {
+      if (i%2 == 0){
+        cout << n << endl;
+        v.push_back (static_cast<int>(n));}
+      else{
+        cout << abs(n) << endl;
+        w.push_back (static_cast<int>(abs(n)));}
+      i++;
+     }
 
-  unsigned int n = 0;
-  char *c = (linha+n);
-  int g = 0;
-
-  while (1) {
-    if ((*c == EOF) || (*c == '\0')) {break;}
-    else {
-      cout << "g=" << g << endl;
-      n = 0;
-      while (*c != '-') {
-        // printf("%c\n", *c);
-        n = n + 1;
-        c = (c+1);
-      }
-      printf("n=%d\n", n);
-      strncpy (v, linha+g, n);
-      puts (v);
-
-      g = g + n;
-      nn = 0;
-      printf("nn=%d\n", nn);
-      while(!isspace(*c)) {
-        // printf("%c\n", *c);
-        nn = nn + 1;
-        c = (c + 1);
+     for (i=0; i < v.size(); i++)
+      {
+        e = Edge (v[i], w[i]);
+        G.insert (e);
+        cout << e.v << " -> " << e.w << endl;
       }
 
-      strncpy (w, linha+g+1, nn);
-      puts (w);
-      g = g+nn;
-
-      inserir_final(atoi(v), atoi(w), lista);
-
-      memset(v, 0, strlen(v));
-      memset(w, 0, strlen(w));
-
-      // add space after edges
-      // c = c+1;
-      g ++;
-    }
-    c = c+1;
-  }
 }
 
 int main(){
@@ -87,7 +62,7 @@ int main(){
 
   IO<DenseGRAPH>::scanEZ (G);
 
-  // IO<DenseGRAPH>::show (G);
+  IO<DenseGRAPH>::show (G);
 
 
   return 0;
