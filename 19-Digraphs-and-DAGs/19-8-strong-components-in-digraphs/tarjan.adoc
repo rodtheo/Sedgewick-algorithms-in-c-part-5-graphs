@@ -1,3 +1,22 @@
+= Tarjan
+////
+Big ol' comment
+
+sittin' right 'tween this here title 'n header metadata
+////
+Dan Allen <thedoc@asciidoctor.org>
+:description: A demo of Asciidoctor. This document +
+              exercises numerous features of AsciiDoc +
+              to test Asciidoctor compliance.
+:source-highlighter: coderay
+:stylesheet: maker.css
+//:imagesdir: images
+//:backend: docbook45
+//:backend: html5
+//:doctype: book
+//:sectids!:
+//:plus: &#43;
+
 https://www.ime.usp.br/~pf/algoritmos_para_grafos-2017-04-06/aulas/tarjan.html
 
 ## Floresta radicada
@@ -34,7 +53,7 @@ Similar ao algoritmo usado para achar pontes (`bridges`) em grafos indiretos com
 
 Como o algoritmo é baseado na busca das pontes, vamos começar descrevendo este algoritmo e como implementa-lo. As pontes em um grafo indireto são arestas que ao serem removidas aumentam o número de componentes conectados do grafo.
 
-![No grafo estão marcados as arestas pontes (Sedgewick)](fig18-16.png)
+image::fig18-16.png[GRAFO]
 
 Para determinar quais arestas são pontes, vamos usar a caracterização dos links da árvore DFS gerada. Com isso, independente do nó escolhido como raíz da árvore, teremos o mesmo resultado final. Mantendo um vetor `pre` indexado pelos vértices `v`, podemos rastrear a ordem `pre[v]` na qual o vértice `v` chamado em cada recursão é visitado. Com a ajuda deste vetor podemos classificar os links entre os vértices `v-w` de uma árvore DFS de um grafo indireto em 4 tipos:
 
@@ -48,12 +67,25 @@ Apesar dos links parent e back representarem retorno a um ancestral de `v`, o li
 
 A árvore DFS abaixo do grafo anterior representa as arestas identificadas como `bridges` marcadas e os 4 tipos de links. Os links `tree` são vértices redondos, `parent` redondo hachurado, `back` são representados em quadrado e `down` são os quadrados hachurados.
 
-![fig18-17](fig18-17.png)
+image::fig18-17.png[DFS]
 
 Como uma ponte `v-w` separa os componentes de um grafo, os descendentes do nó `w` não devem apontar para nenhum ancestral de `w`. Pois, caso isso ocorra, estariamos voltando para outra posição do grafo que estamos desconectando. Levando a uma contradição. Repare na figura que nenhum descendente dos nós 5, 7 e 12 retornam a um ancestral deles. Por outro lado, repare que ao existir um `back link` levando a um acentral após qualquer `tree link` podemos estar diante de uma `bridge`.
 
-No código abaixo recursivamente, ao definirmos `ord[w]` como o valor de pré-ordem do vértice `w` também definimos o valor `low[w] = ord[w]`. Quando chamamos a função recursiva para um vértice não visitado 
+No código abaixo recursivamente, ao definirmos `ord[w]` como o valor de pré-ordem do vértice `w` também definimos o valor `low[w] = ord[w]`. Quando chamamos a função recursiva para um vértice não visitado
 
 “For every vertex v, we use the recursive function to compute the lowest preorder number that can be reached by a sequence of zero or more tree edges followed by a single back edge from any node in the subtree rooted at v. If the computed number is equal to v’s preorder number, then there is no edge connecting a descendant with an ancestor, and we have identified a bridge. The computation for each vertex is straightforward: We proceed through the adjacency list, keeping track of the minimum of the numbers that we can reach by following each edge. For tree edges, we do the computation recursively; for back edges, we use the preorder number of the adjacent vertex. If the call to the recursive function for an edge w-t does not uncover a path to a node with a preorder number less than t’s preorder number, then w-t is a bridge.”
 
 Excerpt From: Robert Sedgewick. “Algorithms in C++ Part 5: Graph Algorithms, Third Edition.”
+
+
+Code listings look cool with Asciidoctor and {source-highlighter}.
+
+[source,c++,linenum]
+----
+void searchC(edge e)
+{
+  int w = e.w;
+  ord[w] = cnt++; low[w] = ord[w];  #<1>
+}
+----
+\<1> Define a pré-ordem e o inicializa o valor de low igual a pré-ordem
