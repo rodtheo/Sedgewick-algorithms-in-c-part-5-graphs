@@ -8,7 +8,7 @@ Dan Allen <thedoc@asciidoctor.org>
 :description: A demo of Asciidoctor. This document +
               exercises numerous features of AsciiDoc +
               to test Asciidoctor compliance.
-:source-highlighter: coderay
+:source-highlighter: pygments
 :stylesheet: maker.css
 //:imagesdir: images
 //:backend: docbook45
@@ -71,21 +71,52 @@ image::fig18-17.png[DFS]
 
 Como uma ponte `v-w` separa os componentes de um grafo, os descendentes do nó `w` não devem apontar para nenhum ancestral de `w`. Pois, caso isso ocorra, estariamos voltando para outra posição do grafo que estamos desconectando. Levando a uma contradição. Repare na figura que nenhum descendente dos nós 5, 7 e 12 retornam a um ancestral deles. Por outro lado, repare que ao existir um `back link` levando a um acentral após qualquer `tree link` podemos estar diante de uma `bridge`.
 
-No código abaixo recursivamente, ao definirmos `ord[w]` como o valor de pré-ordem do vértice `w` também definimos o valor `low[w] = ord[w]`. Quando chamamos a função recursiva para um vértice não visitado
-
 “For every vertex v, we use the recursive function to compute the lowest preorder number that can be reached by a sequence of zero or more tree edges followed by a single back edge from any node in the subtree rooted at v. If the computed number is equal to v’s preorder number, then there is no edge connecting a descendant with an ancestor, and we have identified a bridge. The computation for each vertex is straightforward: We proceed through the adjacency list, keeping track of the minimum of the numbers that we can reach by following each edge. For tree edges, we do the computation recursively; for back edges, we use the preorder number of the adjacent vertex. If the call to the recursive function for an edge w-t does not uncover a path to a node with a preorder number less than t’s preorder number, then w-t is a bridge.”
 
 Excerpt From: Robert Sedgewick. “Algorithms in C++ Part 5: Graph Algorithms, Third Edition.”
 
 
-Code listings look cool with Asciidoctor and {source-highlighter}.
+Segue o código extraído do Sedgewick:
 
 [source,c++,linenum]
 ----
-void searchC(edge e)
+template <class Graph> class EC
 {
-  int w = e.w;
-  ord[w] = cnt++; low[w] = ord[w];  #<1>
-}
+  int bcnt;
+  vector<int> low;
+  void searchC(edge e)
+  {
+    int w = e.w;
+    ord[w] = cnt++; low[w] = ord[w];
+    typename Graph::adjIterator A(G, w);
+    for (int t = A.beg(); !A.end(); t = A.nxt())
+    {
+      if (ord[t] == -1){
+        searchC(Edge(w, t));
+        if (low[w] > low[t]) low[w] = low[t];
+        if (low[t] == ord[t])
+          bcnt++; // w-t is a bridge
+      } // end if
+      else if (t != e.v)
+        if (low[w] > ord[t]) low[w] = ord[t];
+    } // end for
+  } // end searchC()
+
+public:
+  EC (const Graph &G) : SEARCH<Graph>(G), bcnt(0), low(G.V(), -1)
+    {  search(); }
+  int count() const { return bcnt+1; }
+};
 ----
-\<1> Define a pré-ordem e o inicializa o valor de low igual a pré-ordem
+
+A linha 8 define o valor de pré-ordem e inicializa o valor de low igual ao de pré-ordem do vértice `w`. Para cada vértice não marcado que a recursão se aprofunda, isto é, seguindo os links da tree vamos marcando-os e definindo os valores de pré e low para este vértice. Quando chegamos num `back link`, isto é, quando ao fazer o loop na lista de adjacência do vértice `w` e encontrarmos um vértice `t` já marcado na lista (não satisfaz condição linha 12), isto é, um possível ancestral checamos se ele não é a volta do caminho do DFS ( condição na linha 18 ), se não for e tiver valor de pré-ordem menor que low[`w`] ele é um back links que retorna a `w`. Com isso, toda a subárvore seguindo para cima de `t` até `w` terá o valor de low alterado para o valor de low[`w`] (linha 14). Uma aresta w-t é bridge se low[t] == ord[t] (linha 15).
+
+O algoritmo de conectividade acima para detectar pontes em grafos indiretos é a base para a solução de Tarjan ótima para descobrir componentes fortemente conectados em digrafos.
+
+[source,c++,linenum]
+.Tarjan.cc
+----
+include::Tarjan.cc[]
+----
+
+O algoritmo de Tarjan é baseado no DFS recursivo modificado para empurrar os vértices na pilha. Usando um DFS para considerar os vértices em ordem topológica reverse, computamos, para cada v, o ponto mais alto alcançável por um back link entre os descendentes de v. Quando um vértice v tem pre[v] = low[v] 
