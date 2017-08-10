@@ -19,8 +19,9 @@ template<class Graph> void IO<Graph>::show (Graph& G){
 }
 
 int main(){
-
+  // Default
   int V = 6;
+  // int V = 10;
 
   SparseMultiGRAPH D(V, true);
 
